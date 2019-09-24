@@ -6,6 +6,7 @@ python get_exercises.py markdown_file_or_files output_file
 """
 
 import sys
+import os
 
 def extract_exercise(content, end_line):
     """
@@ -28,6 +29,10 @@ def extract_exercise(content, end_line):
 last_input_file = len(sys.argv) - 1
 input_files = sys.argv[1:last_input_file]
 output_file = sys.argv[-1]
+
+# Delete output file if it already exists - we're appending to it later
+if os.path.exists(output_file) and os.path.isfile(output_file):
+    os.remove(output_file)
 
 for file in input_files:
     with open(file) as f:
