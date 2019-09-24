@@ -26,11 +26,17 @@ output_file = sys.argv[2]
 with open(markdown_file) as f:
     content = f.readlines()
 
-ex_markup = "{: .challenge}"
 # Go through content, looking for exercise markup
+ex_markup = "{: .challenge}"
+exercise_text = []
 for line_num, line in enumerate(content):
     if line.startswith(ex_markup):
-        exercise_text = extract_exercise(content, line_num)
-        print(exercise_text)
+        exercise_text.append(extract_exercise(content, line_num))
+
+with open(output_file, 'w') as f:
+    for exercise in exercise_text:
+        for line in exercise:
+            f.write("%s\n" % line)
+        f.write('\n')
 
 
