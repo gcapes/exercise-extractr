@@ -1,3 +1,10 @@
+"""
+Extract challenges from markdown files.
+
+Usage:
+python get_exercises.py markdown_file_or_files output_file
+"""
+
 import sys
 
 def extract_exercise(content, end_line):
@@ -18,26 +25,25 @@ def extract_exercise(content, end_line):
     return exercise_text
 
 
-markdown_file = sys.argv[1]
-assert markdown_file.endswith('.md')
-output_file = sys.argv[2]
+last_input_file = len(sys.argv) - 1
+input_files = sys.argv[1:last_input_file]
+output_file = sys.argv[-1]
 
-with open(markdown_file) as f:
-    content = f.readlines()
+for file in input_files:
+    with open(file) as f:
+        content = f.readlines()
 
-# Go through content, looking for exercise markup
-ex_markup = "{: .challenge}"
-exercise_text = []
-for line_num, line in enumerate(content):
-    if line.startswith(ex_markup):
-        exercise_text.append(extract_exercise(content, line_num))
+    # Go through content, looking for exercise markup
+    ex_markup = "{: .challenge}"
+    exercise_text = []
+    for line_num, line in enumerate(content):
+        if line.startswith(ex_markup):
+            exercise_text.append(extract_exercise(content, line_num))
 
-# Write exercises to file
-with open(output_file, 'w') as f:
-    for exercise in exercise_text:
-        for line in exercise:
-            f.write("%s\n" % line)
-        # Separate each exercise with an empty line
-        f.write('\n')
-
-
+    # Write exercises to file
+    with open(output_file, 'a') as f:
+        for exercise in exercise_text:
+            for line in exercise:
+                f.write("%s\n" % line)
+            # Separate each exercise with an empty line
+            f.write('\n')
