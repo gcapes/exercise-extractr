@@ -35,6 +35,9 @@ if os.path.exists(output_file) and os.path.isfile(output_file):
     os.remove(output_file)
 
 for file in input_files:
+    file_name = os.path.basename(file)
+    episode_title = "# " + file_name.strip('.md')
+
     with open(file) as f:
         content = f.readlines()
 
@@ -47,6 +50,7 @@ for file in input_files:
 
     # Write exercises to file
     with open(output_file, 'a') as f:
+        f.write("%s\n" % episode_title)
         for exercise in exercise_text:
             for line in exercise:
                 f.write("%s\n" % line)
