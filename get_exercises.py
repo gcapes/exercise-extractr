@@ -20,7 +20,6 @@ def extract_exercise(content, end_line):
 
 markdown_file = sys.argv[1]
 assert markdown_file.endswith('.md')
-
 output_file = sys.argv[2]
 
 with open(markdown_file) as f:
@@ -33,10 +32,12 @@ for line_num, line in enumerate(content):
     if line.startswith(ex_markup):
         exercise_text.append(extract_exercise(content, line_num))
 
+# Write exercises to file
 with open(output_file, 'w') as f:
     for exercise in exercise_text:
         for line in exercise:
             f.write("%s\n" % line)
+        # Separate each exercise with an empty line
         f.write('\n')
 
 
