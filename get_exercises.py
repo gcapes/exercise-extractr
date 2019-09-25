@@ -29,6 +29,17 @@ def extract_exercise(content, end_line):
     return exercise_text
 
 
+def check_input_arguments():
+    """
+    Check script is called with enough arguments.
+    :return:
+    """
+    n_arguments = len(sys.argv)
+    assert n_arguments >= 3, "Script requires at least two arguments."
+
+
+check_input_arguments()
+
 last_input_file = len(sys.argv) - 1
 input_files = sys.argv[1:last_input_file]
 output_file = sys.argv[-1]
