@@ -113,9 +113,11 @@ for file in input_files:
 
     # Write exercises to file
     with open(output_file, 'a') as f:
-        f.write("%s\n" % episode_title)
-        for exercise in exercise_text:
-            for line in exercise:
-                f.write("%s\n" % line)
-            # Separate each exercise with an empty line
-            f.write('\n')
+        # Only print episode title if there are exercises
+        if len(exercise_text) > 1:
+            f.write("%s\n" % episode_title)
+            for exercise in exercise_text:
+                for line in exercise:
+                    f.write("%s\n" % line)
+                # Separate each exercise with an empty line
+                f.write('\n')
