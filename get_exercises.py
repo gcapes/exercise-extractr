@@ -19,9 +19,12 @@ def extract_exercise(content, end_line):
     while line.startswith(prefix):
         line = line[len(prefix):]
         line = line.strip()
-        exercise_text.insert(0, line)
-        line_num = line_num - 1
-        line = content[line_num]
+
+        # Don't extract solutions
+        if not line.startswith(prefix) and not line == "{: .solution}":
+            exercise_text.insert(0, line)
+            line_num = line_num - 1
+            line = content[line_num]
 
     return exercise_text
 
