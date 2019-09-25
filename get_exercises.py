@@ -65,6 +65,26 @@ def get_reference_links(file_contents, line):
     else:
         return None
 
+
+def move_links_to_end(text):
+    """
+    Search through contents for reference-style links throughout the text,
+    and collect them together at the end of the episode.
+    :param contents:
+    :return:
+    """
+    links = []
+    for exercise in text:
+        for line in exercise:
+            if re.search("\[.*\]:.*", line):
+                links.append(line)
+                exercise.remove(line)
+
+    text.append(links)
+
+    return text
+
+
 check_input_arguments()
 
 last_input_file = len(sys.argv) - 1
@@ -88,6 +108,8 @@ for file in input_files:
     for line_num, line in enumerate(content):
         if line.startswith(ex_markup):
             exercise_text.append(extract_exercise(content, line_num))
+
+    exercise_text = move_links_to_end(exercise_text)
 
     # Write exercises to file
     with open(output_file, 'a') as f:
