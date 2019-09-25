@@ -27,6 +27,8 @@ def extract_exercise(content, end_line):
             if links:
                 for link in links:
                     exercise_text.append(link)
+
+            line = subsitute_variable_from_yaml(yaml_config, line)
             exercise_text.insert(0, line)
             line_num = line_num - 1
             line = content[line_num]
@@ -40,7 +42,7 @@ def check_input_arguments():
     :return:
     """
     n_arguments = len(sys.argv)
-    assert n_arguments >= 3, "Script requires at least two arguments."
+    assert n_arguments >= 4, "Script requires at least three arguments."
 
 
 def get_reference_links(file_contents, line):
@@ -85,10 +87,39 @@ def move_links_to_end(text):
     return text
 
 
+def subsitute_variable_from_yaml(yaml_file, input_line):
+    """
+    :param input_line: string to parse
+    :param yaml: yaml config file for repo
+    :return:
+    """
+    with open(yaml_file) as f:
+        yaml = f.readlines()
+
+    var_pattern = "{{(.*)}}"
+    matches =  re.findall(var_pattern, input_line)
+
+    for var in matches:
+        var = re.sub('site\.',"", var)
+        # site.XXX seems to be the same as just XXX
+        for line in yaml:
+            if line.startswith(var):
+                value = line[len(var)+1:]
+                value = value.strip('\n')
+                value = value.strip()
+                value = value.strip('"')
+                value = value.strip()
+
+                input_line = re.sub(var_pattern, value, input_line)
+
+    return input_line
+
+
 check_input_arguments()
 
+yaml_config = sys.argv[1]
 last_input_file = len(sys.argv) - 1
-input_files = sys.argv[1:last_input_file]
+input_files = sys.argv[2:last_input_file]
 output_file = sys.argv[-1]
 
 # Delete output file if it already exists - we're appending to it later
