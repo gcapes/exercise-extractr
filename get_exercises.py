@@ -23,7 +23,10 @@ def extract_exercise(content, end_line):
 
         # Don't extract solutions
         if not line.startswith(prefix) and not line == "{: .solution}":
-            line = expand_reference_links(content, line)
+            links = get_reference_links(content, line)
+            if links:
+                for link in links:
+                    exercise_text.append(link)
             exercise_text.insert(0, line)
             line_num = line_num - 1
             line = content[line_num]
@@ -40,29 +43,27 @@ def check_input_arguments():
     assert n_arguments >= 3, "Script requires at least two arguments."
 
 
-def expand_reference_links(file_contents, line):
+def get_reference_links(file_contents, line):
     """
-    Expand reference-style links
+    Get reference-style links
     :param file_contents:
     :param line:
     :return:
     """
     regex = "\[.+\](\[\S+\])"
     matches = re.findall(regex, line)
-    if matches:
-        for reference in matches:
-            # Replace reference with full link
-            for search_line in file_contents:
-                if search_line.startswith(reference):
-                    link = search_line.strip(reference)
-                    link = link.strip()
-                    link = link.strip('\n')
-                    link = link.strip(':')
-                    link = link.strip()
-                    link = "(" + link + ")"
-                    line = line.replace(reference, link)
-    return line
 
+    if matches:
+        links = []
+        for reference in matches:
+            # Get all links
+            for search_line in file_contents:
+                if search_line.startswith(reference + ':'):
+                    links.append(search_line.strip('\n'))
+        return links
+
+    else:
+        return None
 
 check_input_arguments()
 
