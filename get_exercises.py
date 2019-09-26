@@ -18,8 +18,11 @@ def extract_exercise(content, end_line):
     exercise_text = []
     prefix = ">"
     while line.startswith(prefix):
-        # + 1 because one space after '>' block marker
-        line = line[len(prefix)+1:]
+        # Check for single-space after prefix
+        line_start = len(prefix)
+        if line[line_start] == " ":
+            line_start += 1
+        line = line[line_start:]
         line = line.strip("\n")
 
         # Don't extract solutions
