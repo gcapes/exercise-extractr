@@ -136,9 +136,10 @@ for file in input_files:
 
     # Go through content, looking for exercise markup
     ex_markup = "{: .challenge}"
+    discuss_markup = "{: .discussion}"
     exercise_text = []
     for line_num, line in enumerate(content):
-        if line.startswith(ex_markup):
+        if line.startswith(ex_markup) or line.startswith(discuss_markup):
             exercise_text.append(extract_exercise(content, line_num))
 
     exercise_text = move_links_to_end(exercise_text)
