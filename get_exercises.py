@@ -30,8 +30,8 @@ def extract_exercise(content, end_line):
 
             line = subsitute_variable_from_yaml(yaml_config, line)
             exercise_text.insert(0, line)
-            line_num = line_num - 1
-            line = content[line_num]
+        line_num = line_num - 1
+        line = content[line_num]
 
     return exercise_text
 
