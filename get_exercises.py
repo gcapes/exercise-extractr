@@ -42,11 +42,11 @@ def extract_exercise(content, end_line):
 
 def check_input_arguments():
     """
-    Check script is called with enough arguments.
+    Check script is called with correct arguments.
     :return:
     """
-    n_arguments = len(sys.argv)
-    assert n_arguments >= 4, "Script requires at least three arguments."
+    lesson_dir = sys.argv[1]
+    assert os.path.isdir(lesson_dir), "Expected lesson repo directory"
 
 
 def get_reference_links(file_contents, line):
@@ -121,10 +121,10 @@ def subsitute_variable_from_yaml(yaml_file, input_line):
 
 check_input_arguments()
 
-yaml_config = sys.argv[1]
-last_input_file = len(sys.argv) - 1
-input_files = sys.argv[2:last_input_file]
-output_file = sys.argv[-1]
+lesson_dir = sys.argv[1]
+yaml_config = os.path.join(lesson_dir, "_config.yml")
+input_files = sorted([os.path.join(lesson_dir, "_episodes", file) for file in os.listdir(os.path.join(lesson_dir, "_episodes")) if file.endswith(".md")])
+output_file = "exercises.md"
 
 # Delete output file if it already exists - we're appending to it later
 if os.path.exists(output_file) and os.path.isfile(output_file):
