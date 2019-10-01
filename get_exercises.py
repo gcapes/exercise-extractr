@@ -8,6 +8,8 @@ python get_exercises.py markdown_file_or_files output_file
 import sys
 import os
 import re
+import subprocess
+
 
 def extract_exercise(content, end_line):
     """
@@ -117,6 +119,35 @@ def substitute_variable_from_yaml(yaml_file, input_line):
                 input_line = re.sub(var_pattern, value, input_line)
 
     return input_line
+
+
+def github_pages_from_remote(remote_url):
+    """
+    Get github pages URL from git remote
+    :param website_base_url:
+    :return:
+    """
+    key_part = remote_url.split(":")[1]
+    key_part = key_part.split('.')[0]
+    sub_parts = key_part.split('/')
+    account = sub_parts[0]
+    lesson = sub_parts[1]
+    website_base_url = "https://" + account + ".github.io/" + lesson
+
+    return website_base_url
+
+
+def get_website_url(repo_dir):
+    """
+    In the episode markdown files, {{page.root}} is expanded to e.g. https://carpentries.github.io/instructor-training/
+    :param repo:
+    :return:
+    """
+    git = "/usr/bin/git"
+    remote_url = subprocess.check_output([git, '-C', repo_dir, 'config', '--get', 'remote.upstream.url'])
+    remote_url = remote_url.decode("utf-8")
+
+    return github_pages_from_remote(remote_url)
 
 
 check_input_arguments()
