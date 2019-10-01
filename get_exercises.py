@@ -35,6 +35,7 @@ def extract_exercise(content, end_line):
                     exercise_text.append(link)
 
             line = substitute_variable_from_yaml(yaml_config, line)
+            line = substitute_internal_links(line, website_url)
             exercise_text.insert(0, line)
         line_num = line_num - 1
         line = content[line_num]
@@ -132,7 +133,7 @@ def github_pages_from_remote(remote_url):
     sub_parts = key_part.split('/')
     account = sub_parts[0]
     lesson = sub_parts[1]
-    website_base_url = "https://" + account + ".github.io/" + lesson
+    website_base_url = "https://" + account + ".github.io/" + lesson + "/"
 
     return website_base_url
 
@@ -150,12 +151,31 @@ def get_website_url(repo_dir):
     return github_pages_from_remote(remote_url)
 
 
+def substitute_internal_links(input_line, page_root_value):
+    """
+    Replace the page.root variable with the github pages URL.
+    :param line:
+    :return:
+    """
+    var_pattern = "(\{\{\s*page\.root\s\}\})"
+    matches = re.findall(var_pattern, input_line)
+    for var in matches:
+        input_line = re.sub(var_pattern, page_root_value, input_line)
+
+    var_pattern = "(\{% link _episodes/(\w+-\w+)\.md %\})"
+    matches = re.findall(var_pattern, input_line)
+    for var in matches:
+        input_line = re.sub(var_pattern, var[1], input_line)
+
+    return input_line
+
 check_input_arguments()
 
 lesson_dir = sys.argv[1]
 yaml_config = os.path.join(lesson_dir, "_config.yml")
 input_files = sorted([os.path.join(lesson_dir, "_episodes", file) for file in os.listdir(os.path.join(lesson_dir, "_episodes")) if file.endswith(".md")])
 output_file = "exercises.md"
+website_url = get_website_url(lesson_dir)
 
 # Delete output file if it already exists - we're appending to it later
 if os.path.exists(output_file) and os.path.isfile(output_file):
