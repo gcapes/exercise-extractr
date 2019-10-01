@@ -32,7 +32,7 @@ def extract_exercise(content, end_line):
                 for link in links:
                     exercise_text.append(link)
 
-            line = subsitute_variable_from_yaml(yaml_config, line)
+            line = substitute_variable_from_yaml(yaml_config, line)
             exercise_text.insert(0, line)
         line_num = line_num - 1
         line = content[line_num]
@@ -91,7 +91,7 @@ def move_links_to_end(text):
     return text
 
 
-def subsitute_variable_from_yaml(yaml_file, input_line):
+def substitute_variable_from_yaml(yaml_file, input_line):
     """
     :param input_line: string to parse
     :param yaml: yaml config file for repo
