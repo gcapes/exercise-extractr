@@ -5,10 +5,10 @@ Usage:
 python get_exercises.py markdown_file_or_files output_file
 """
 
-import sys
 import os
 import re
 import subprocess
+import sys
 
 
 def extract_exercise(content, end_line):
