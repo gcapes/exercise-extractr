@@ -128,12 +128,11 @@ def github_pages_from_remote(remote_url):
     :param website_base_url:
     :return:
     """
-    key_part = remote_url.split(":")[1]
-    key_part = key_part.split('.')[0]
-    sub_parts = key_part.split('/')
-    account = sub_parts[0]
-    lesson = sub_parts[1]
-    website_base_url = "https://" + account + ".github.io/" + lesson + "/"
+    pattern = r'.*github\.com.([^/]*)/(.*)\.git$'
+    match = re.match(pattern, remote_url)
+    if match:
+        account, lesson  = match.groups()
+    website_base_url = f"https://{account}.github.io/{lesson}/"
 
     return website_base_url
 
