@@ -132,7 +132,7 @@ def github_pages_from_remote(remote_url):
     match = re.match(pattern, remote_url)
     if match:
         account, lesson  = match.groups()
-    website_base_url = f"https://{account}.github.io/{lesson}/"
+        website_base_url = f"https://{account}.github.io/{lesson}/"
 
     return website_base_url
 
