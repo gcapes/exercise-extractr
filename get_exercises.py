@@ -5,10 +5,10 @@ Usage:
 python get_exercises.py markdown_file_or_files output_file
 """
 
-import sys
 import os
 import re
 import subprocess
+import sys
 
 
 def extract_exercise(content, end_line):
@@ -128,12 +128,11 @@ def github_pages_from_remote(remote_url):
     :param website_base_url:
     :return:
     """
-    key_part = remote_url.split(":")[1]
-    key_part = key_part.split('.')[0]
-    sub_parts = key_part.split('/')
-    account = sub_parts[0]
-    lesson = sub_parts[1]
-    website_base_url = "https://" + account + ".github.io/" + lesson + "/"
+    pattern = r'.*github\.com.([^/]*)/(.*)\.git$'
+    match = re.match(pattern, remote_url)
+    if match:
+        account, lesson  = match.groups()
+        website_base_url = f"https://{account}.github.io/{lesson}/"
 
     return website_base_url
 
@@ -144,9 +143,15 @@ def get_website_url(repo_dir):
     :param repo:
     :return:
     """
-    git = "/usr/bin/git"
-    remote_url = subprocess.check_output([git, '-C', repo_dir, 'config', '--get', 'remote.upstream.url'])
-    remote_url = remote_url.decode("utf-8")
+    command = ['git', '-C', repo_dir, 'remote']
+    remotes = subprocess.check_output(command).decode("ascii").split()
+    pattern = '.*(swcarpentry|datacarpentry|librarycarpentry|carpentries)/([^.]+)\.git'
+    for remote in remotes:
+        command = ["git", "-C", repo_dir, "config", "--get", f"remote.{remote}.url"]
+        remote_url = subprocess.check_output(command).decode("ascii").strip()
+        match = re.match(pattern, remote_url)
+        if match:
+            break
 
     return github_pages_from_remote(remote_url)
 
@@ -157,7 +162,7 @@ def substitute_internal_links(input_line, page_root_value):
     :param line:
     :return:
     """
-    var_pattern = "(\{\{\s*page\.root\s\}\})"
+    var_pattern = "(\{\{\s*page\.root\s*\}\})"
     matches = re.findall(var_pattern, input_line)
     for var in matches:
         input_line = re.sub(var_pattern, page_root_value, input_line)
