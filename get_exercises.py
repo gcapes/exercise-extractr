@@ -143,9 +143,15 @@ def get_website_url(repo_dir):
     :param repo:
     :return:
     """
-    git = "/usr/bin/git"
-    remote_url = subprocess.check_output([git, '-C', repo_dir, 'config', '--get', 'remote.upstream.url'])
-    remote_url = remote_url.decode("utf-8")
+    command = ['git', '-C', repo_dir, 'remote']
+    remotes = subprocess.check_output(command).decode("ascii").split()
+    pattern = '.*(swcarpentry|datacarpentry|librarycarpentry|carpentries)/([^.]+)\.git'
+    for remote in remotes:
+        command = ["git", "-C", repo_dir, "config", "--get", f"remote.{remote}.url"]
+        remote_url = subprocess.check_output(command).decode("ascii").strip()
+        match = re.match(pattern, remote_url)
+        if match:
+            break
 
     return github_pages_from_remote(remote_url)
 
