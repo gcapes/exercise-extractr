@@ -157,7 +157,7 @@ def substitute_internal_links(input_line, page_root_value):
     :param line:
     :return:
     """
-    var_pattern = "(\{\{\s*page\.root\s\}\})"
+    var_pattern = "(\{\{\s*page\.root\s*\}\})"
     matches = re.findall(var_pattern, input_line)
     for var in matches:
         input_line = re.sub(var_pattern, page_root_value, input_line)
