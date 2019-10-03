@@ -5,6 +5,7 @@ Usage:
 python get_exercises.py markdown_file_or_files output_file
 """
 
+import glob
 import os
 import re
 import subprocess
@@ -178,7 +179,7 @@ check_input_arguments()
 
 lesson_dir = sys.argv[1]
 yaml_config = os.path.join(lesson_dir, "_config.yml")
-input_files = sorted([os.path.join(lesson_dir, "_episodes", file) for file in os.listdir(os.path.join(lesson_dir, "_episodes")) if file.endswith(".md")])
+input_files = sorted(glob.glob(os.path.join(lesson_dir, "_episodes", "*.md")))
 output_file = "exercises.md"
 website_url = get_website_url(lesson_dir)
 
@@ -187,8 +188,7 @@ if os.path.exists(output_file) and os.path.isfile(output_file):
     os.remove(output_file)
 
 for file in input_files:
-    file_name = os.path.basename(file)
-    episode_title = "# " + file_name.strip('.md')
+    episode_title = "# " + os.path.splitext(os.path.basename(file))[0]
 
     with open(file) as f:
         content = f.readlines()
