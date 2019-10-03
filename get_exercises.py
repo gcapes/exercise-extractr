@@ -188,8 +188,7 @@ if os.path.exists(output_file) and os.path.isfile(output_file):
     os.remove(output_file)
 
 for file in input_files:
-    file_name = os.path.basename(file)
-    episode_title = "# " + file_name.strip('.md')
+    episode_title = "# " + os.path.splitext( os.path.basename( file ) )[0]
 
     with open(file) as f:
         content = f.readlines()
