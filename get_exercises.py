@@ -138,7 +138,7 @@ def github_pages_from_remote(remote_url):
     return website_base_url
 
 
-def get_website_url(repo_dir):
+def get_remote_url(repo_dir):
     """
     In the episode markdown files, {{page.root}} is expanded to e.g. https://carpentries.github.io/instructor-training/
     :param repo:
@@ -154,7 +154,7 @@ def get_website_url(repo_dir):
         if match:
             break
 
-    return github_pages_from_remote(remote_url)
+    return remote_url
 
 
 def substitute_internal_links(input_line, page_root_value):
@@ -181,7 +181,8 @@ lesson_dir = sys.argv[1]
 yaml_config = os.path.join(lesson_dir, "_config.yml")
 input_files = sorted(glob.glob(os.path.join(lesson_dir, "_episodes", "*.md")))
 output_file = "exercises.md"
-website_url = get_website_url(lesson_dir)
+remote_url = get_remote_url(lesson_dir)
+website_url = github_pages_from_remote(remote_url)
 
 # Delete output file if it already exists - we're appending to it later
 if os.path.exists(output_file) and os.path.isfile(output_file):
