@@ -37,6 +37,7 @@ def extract_exercise(content, end_line):
 
             line = substitute_variable_from_yaml(yaml_config, line)
             line = substitute_internal_links(line, website_url)
+            line = resolve_file_links(line, repo_blob_from_remote(remote_url))
             exercise_text.insert(0, line)
         line_num = line_num - 1
         line = content[line_num]
@@ -122,6 +123,21 @@ def substitute_variable_from_yaml(yaml_file, input_line):
 
     return input_line
 
+def repo_blob_from_remote(remote_url):
+    """
+    Get repo blob URL stem for file downloads
+    e.g. https://github.com/carpentries/instructor-training/blob/gh-pages/
+    :param remote_url:
+    :return: URL stem for file downloads
+    """
+    pattern = r'.*github\.com.([^/]*)/(.*)\.git$'
+    match = re.match(pattern, remote_url)
+    if match:
+        account, lesson = match.groups()
+        blob = f"https://github.com/{account}/{lesson}/blob/gh-pages"
+
+    return blob
+
 
 def github_pages_from_remote(remote_url):
     """
@@ -174,6 +190,21 @@ def substitute_internal_links(input_line, page_root_value):
         input_line = re.sub(var_pattern, var[1], input_line)
 
     return input_line
+
+
+def resolve_file_links(line, repo_blob_stem):
+    """
+    Replace links to within the repo with full URL to files
+    :param line:
+    :param repo_blob_stem:
+    :return: file download link
+    """
+    pattern = "\(\.\.(/files/\S+)\)" # use two sub-groups
+    matches = re.findall(pattern, line)
+    for match in matches:
+        line = re.sub(pattern, "(" + repo_blob_stem + match + ")", line)
+    return line
+
 
 check_input_arguments()
 
