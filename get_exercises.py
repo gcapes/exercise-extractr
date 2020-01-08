@@ -38,6 +38,7 @@ def extract_exercise(content, end_line):
             line = substitute_variable_from_yaml(yaml_config, line)
             line = substitute_internal_links(line, website_url)
             line = resolve_file_links(line, repo_blob_from_remote(remote_url))
+            line = replace_etherpad_with_shared_doc(line)
             exercise_text.insert(0, line)
         line_num = line_num - 1
         line = content[line_num]
@@ -206,6 +207,14 @@ def resolve_file_links(line, repo_blob_stem):
         line = re.sub(pattern, "(" + repo_blob_stem + match + ")", line)
     return line
 
+def replace_etherpad_with_shared_doc(line):
+    """
+    Replace references to etherpad with shared document
+    :param line:
+    :return:
+    """
+    line = re.sub('[Ee]therpad', 'shared document', line)
+    return line
 
 check_input_arguments()
 
