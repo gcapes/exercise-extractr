@@ -109,7 +109,7 @@ def substitute_variable_from_yaml(yaml_file, input_line):
     matches = re.findall(var_pattern, input_line)
 
     for var in matches:
-        var = re.sub('site\.',"", var)
+        var = re.sub('(site|page)\.',"", var)
         # site.XXX seems to be the same as just XXX
         var = var.strip()
         for line in yaml:
