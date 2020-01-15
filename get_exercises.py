@@ -201,7 +201,7 @@ def resolve_file_links(line, repo_blob_stem):
     :param repo_blob_stem:
     :return: file download link
     """
-    pattern = "\(\.\.(/files/\S+)\)" # use two sub-groups
+    pattern = "\(\.\.(/files/\S+?)\)" # use two sub-groups
     matches = re.findall(pattern, line)
     for match in matches:
         line = re.sub(pattern, "(" + repo_blob_stem + match + ")", line)
